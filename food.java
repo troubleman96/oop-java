@@ -18,6 +18,15 @@ public static void main(String[] args){
     chipsi.order();
 
     System.out.println("Food name: " + chipsi.food_name + " — " + "Price: " + chipsi.price);
-}
 
+
+    food pilau = new food();
+    pilau.food_name = "Pilau";
+    pilau.price = 150;
+
+    pilau.order();
+
+    System.out.println("Food name: " + pilau.food_name + " — " + "Price: " + pilau.price);
+
+    }
 }
