@@ -64,23 +64,61 @@ public void move() {
 }
 ```
 
-### `Main.java` — Demonstration
+### `Main.java` — Deep Explanation
 
 ```java
-Car car = new Car("Toyota", 4);
-car.setSpeed(80);
+public class Main {
+    public static void main(String[] args) {
 
-Motorcycle motorcycle = new Motorcycle("Yamaha", false);
-motorcycle.setSpeed(60);
+        Car car = new Car("Toyota", 4);
+        car.setSpeed(80);
 
-Vehicle[] vehicles = { car, motorcycle };
+        Motorcycle motorcycle = new Motorcycle("Yamaha", false);
+        motorcycle.setSpeed(60);
 
-for (Vehicle vehicle : vehicles) {
-    vehicle.displayInfo();   // polymorphic call to move()
+        Vehicle[] vehicles = { car, motorcycle };
+
+        for (Vehicle vehicle : vehicles) {
+            vehicle.displayInfo();
+        }
+
+        System.out.println(car.getBrand() + " has " + car.getNumberOfDoors() + " doors");
+        System.out.println(motorcycle.getBrand() + " has sidecar: " + motorcycle.getHasSidecar());
+    }
 }
 ```
 
-Output:
+#### Line-by-Line
+
+**`Car car = new Car("Toyota", 4);`**
+- Calls `Car(String, int)` constructor.
+- **Constructor chain**: `Car("Toyota", 4)` → `super("Toyota")` → `Vehicle("Toyota")` sets `brand = "Toyota"`, `speed = 0`. Then Car sets `numberOfDoors = 4`.
+
+**`car.setSpeed(80);`**
+- Calls inherited `setSpeed(int)` from `Vehicle`. The `speed >= 0` check passes, so `speed = 80`.
+
+**`Motorcycle motorcycle = new Motorcycle("Yamaha", false);`**
+- Same pattern: `super("Yamaha")` → brand = "Yamaha", speed = 0, then `hasSidecar = false`.
+
+**`motorcycle.setSpeed(60);`** — Inherited, sets `speed = 60`.
+
+**`Vehicle[] vehicles = { car, motorcycle };`**
+- Array typed as `Vehicle[]` (parent type). Both objects are **upcast** implicitly.
+- Compile-time type: `Vehicle`. Runtime type: `Car` / `Motorcycle`.
+
+**`for (Vehicle vehicle : vehicles) { vehicle.displayInfo(); }`**
+- Iteration 1: `vehicle` → Car object. `displayInfo()` prints brand + speed, then calls `this.move()`.
+  - **Dynamic dispatch**: JVM sees the actual object is `Car`, so `Car.move()` runs → `"Toyota drives smoothly on four wheels"`.
+- Iteration 2: `vehicle` → Motorcycle object. `this.move()` dispatches to `Motorcycle.move()` → `"Yamaha zooms on two wheels"`.
+
+**Final print statements:**
+- `car.getBrand()` — inherited from Vehicle → `"Toyota"`.
+- `car.getNumberOfDoors()` — **Car-specific** method, only callable via `Car` reference → `4`.
+- `motorcycle.getBrand()` — inherited → `"Yamaha"`.
+- `motorcycle.getHasSidecar()` — **Motorcycle-specific** → `false`.
+
+#### Output
+
 ```
 Toyota is moving at 80 km/h
 Toyota drives smoothly on four wheels
